@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace Calculator
 {
     class Program
@@ -7,9 +8,12 @@ namespace Calculator
         static void Main(string[] args)
         {
             Console.WriteLine("Enter your first number");
-            Console.ReadLine();
 
-            var a = Console.ReadLine();
+            var entered = Console.ReadLine();
+            var a = entered;
+
+            Console.WriteLine($"{a}");
+
 
            
         }
