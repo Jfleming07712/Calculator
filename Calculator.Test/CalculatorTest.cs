@@ -9,45 +9,34 @@ namespace Calculator.Test
     {
         [Fact]
         public void Calculator2_Runs() {
-            var calculat = new Calculator();
+            var calculat = new Calculator(0);
         }
     }
 
     public class CalculatorTests
     {
-        private static Random random = new Random();
+        private static Random random = new Random(DateTime.UtcNow.Second);
 
         [Fact]
         public void CalculaterTestValid()
         {
-            //Arrange
+            // Arrange
             var firstNumber = "5";
             var secondNumber = "2";
             var mathOperator = "*";
 
-            //Act
-            var actual = Program.Calculate(firstNumber, secondNumber, mathOperator);
+            // Act
+            var actual = new Calculator(0).Calculate(firstNumber, secondNumber, mathOperator);
 
-            //Assert
+            // Assert
             Assert.Equal("Result is 10", actual);
         }
 
-        public static string GetRandomString(int length)
+        public string GetRandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
-        public static bool TryParse(string maybeANumber, out double theNumber) {
-            try {
-                theNumber = double.Parse(maybeANumber);
-            } catch (Exception) {
-                theNumber = 0;
-                return false;
-            }
-
-            return true;
         }
 
         [Fact]
@@ -59,7 +48,7 @@ namespace Calculator.Test
             var mathOperator = "*";
 
             // Act
-            var actual = Program.Calculate(firstNumber, secondNumber, mathOperator);
+            var actual = new Calculator(0).Calculate(firstNumber, secondNumber, mathOperator);
 
             // Assert?
             Assert.Equal("Invalid input", actual);

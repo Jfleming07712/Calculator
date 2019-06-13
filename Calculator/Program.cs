@@ -5,43 +5,27 @@ namespace Calculator
 {
     public class Calculator
     {
+        private string InvalidInput = "Invalid input";
 
-    }
+        private int howBrokenAmI;
 
-    public class Program
-    {
-
-        public static void Main(string[] args)
-        {
-            string firstNumber = Interact("Enter your first number");
-            string mathOperator = Interact("Enter the operator");
-            string secondNumber = Interact("Enter your Second Number");
-
-            var result = Calculate(firstNumber, secondNumber, mathOperator);
+        public Calculator(int brokenness) {
+            this.howBrokenAmI = brokenness;
         }
 
-        public static string Interact(string message) {
-            Console.WriteLine(message);
-            Console.WriteLine("> ");
-            var response = Console.ReadLine();
-            return response;
-        }
-
-        public static string Calculate(string firstNumberString, string secondNumberString, string mathOperator)
-        {
-            const string InvalidInput = "Invalid input";
-
+        public string Calculate(string firstNumberString, string secondNumberString, string mathOperator) {
             if (!double.TryParse(firstNumberString, out var firstNumber)) {
-                return InvalidInput;
+                return this.InvalidInput;
             }
 
             if (!double.TryParse(secondNumberString, out var secondNumber)) {
-                return InvalidInput;
+                return this.InvalidInput;
             }
 
+            secondNumber = secondNumber + this.howBrokenAmI;
+
             Nullable<double> result;
-            switch (mathOperator)
-            {
+            switch (mathOperator) {
                 case "+":
                     result = firstNumber + secondNumber;
                     break;
@@ -61,12 +45,38 @@ namespace Calculator
 
             if (result == null)
             {
-                return InvalidInput;
+                return this.InvalidInput;
             }
             else
             {
                 return $"Result is {result}";
             }
+        }
+    }
+
+    public class Program
+    {
+        public static int Main(string[] args)
+        {
+            string firstNumber = Interact("Enter your first number");
+            string mathOperator = Interact("Enter the operator");
+            string secondNumber = Interact("Enter your Second Number");
+
+            var calculator = new Calculator(0);
+
+            var brokenCalculator = new Calculator(5);
+
+            var result1 = calculator.Calculate(firstNumber, secondNumber, mathOperator);
+            var result2 = brokenCalculator.Calculate(firstNumber, secondNumber, mathOperator);
+
+            return 0;
+        }
+
+        public static string Interact(string message) {
+            Console.WriteLine(message);
+            Console.WriteLine("> ");
+            var response = Console.ReadLine();
+            return response;
         }
     }
 }
