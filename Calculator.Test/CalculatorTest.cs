@@ -1,19 +1,24 @@
 using System;
-using Xunit;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
+using Moq;
+
+using Xunit;
 
 namespace Calculator.Test
 {
     public class CalculatorInterfaceTests
     {
         [Fact]
-        public void Go_AsksForFirstNumberFirst() {
+        public void Go_AsksForFirstNumberFirst()
+        {
             // Arrange
             var screen = new FakeScreen();
             var keypad = new FakeKeypad();
-            keypad.Messages = new List<string> {
+            keypad.Messages = new List<string>
+            {
                 "5",
                 "2",
                 "*",
@@ -26,6 +31,27 @@ namespace Calculator.Test
 
             // Assert
             Assert.Equal("Enter your first number", screen.Messages[0]);
+        }
+
+        [Fact]
+        public void Go_AsksForFirstNumberFirst_UsingMoq()
+        {
+            // Arrange
+            var mockScreen = new Mock<IScreen>();
+            var mockKeypad = new Mock<IKeypad>();
+            var queue = new Queue<string>(new[] { "5", "*", "2" });
+            mockKeypad.Setup(keypad => keypad.GetInput()).Returns(() => queue.Dequeue());
+
+            var calculatorInterface = new CalculatorInterface(mockScreen.Object, mockKeypad.Object);
+
+            // Act
+            calculatorInterface.Go();
+
+            // Assert
+            mockScreen.Verify(screen => screen.Print("Enter your first number"));
+            mockScreen.Verify(screen => screen.Print("Enter the operator"));
+            mockScreen.Verify(screen => screen.Print("Enter your Second Number"));
+            mockScreen.Verify(screen => screen.Print("Result is 10"));
         }
     }
 
@@ -71,20 +97,20 @@ namespace Calculator.Test
         }
     }
 
-    public class FakeScreen : CalculatorScreen
+    public class FakeScreen : IScreen
     {
         public List<string> Messages { get; set; } = new List<string>();
-        public override void Print(string message) {
+        public void Print(string message) {
             this.Messages.Add(message);
         }
     }
 
-    public class FakeKeypad : CalculatorKeypad
+    public class FakeKeypad : IKeypad
     {
         private int numMessage = 0;
         public List<string> Messages { get; set; } = new List<string>();
 
-        public override void GetInput(string message) {
+        public string GetInput() {
             return this.Messages[numMessage];
         }
     }

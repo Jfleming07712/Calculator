@@ -56,10 +56,10 @@ namespace Calculator
 
     public class CalculatorInterface
     {
-        private readonly CalculatorScreen screen;
-        private readonly CalculatorKeypad keypad;
+        private readonly IScreen screen;
+        private readonly IKeypad keypad;
 
-        public CalculatorInterface(CalculatorScreen screen, CalculatorKeypad keypad) {
+        public CalculatorInterface(IScreen screen, IKeypad keypad) {
             this.screen = screen;
             this.keypad = keypad;
         }
@@ -71,7 +71,8 @@ namespace Calculator
 
             var calculator = new Calculator(0);
 
-            var result1 = calculator.Calculate(firstNumber, secondNumber, mathOperator);
+            var result = calculator.Calculate(firstNumber, secondNumber, mathOperator);
+            this.screen.Print(result);
         }
 
         public string Interact(string message) {
@@ -83,25 +84,32 @@ namespace Calculator
         }
     }
 
-    public class CalculatorScreen
+    public interface IScreen
     {
-        public virtual void Print(string message) {
-            Console.WriteLine(message);
-        }
+        void Print(string message);
     }
 
-    public class CalculatorKeypad
+    public interface IKeypad
     {
-        public virtual string GetInput() {
+        string GetInput();
+    }
+
+    public class CalculatorConsole : IScreen, IKeypad
+    {
+        public string GetInput() {
             return Console.ReadLine();
+        }
+
+        public void Print(string message) {
+            Console.WriteLine(message);
         }
     }
 
     public class Program {
         public static void Main(string[] args) {
-            var screen = new CalculatorScreen();
-            var keypad = new CalculatorKeypad();
-            new CalculatorInterface().Go(screen, keypad);
+            var console = new CalculatorConsole();
+            new CalculatorInterface(console, console)
+                .Go();
         }
     }
 }
