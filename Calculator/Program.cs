@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 
 namespace Calculator
 {
@@ -54,29 +54,54 @@ namespace Calculator
         }
     }
 
-    public class Program
+    public class CalculatorInterface
     {
-        public static int Main(string[] args)
-        {
-            string firstNumber = Interact("Enter your first number");
-            string mathOperator = Interact("Enter the operator");
-            string secondNumber = Interact("Enter your Second Number");
+        private readonly CalculatorScreen screen;
+        private readonly CalculatorKeypad keypad;
+
+        public CalculatorInterface(CalculatorScreen screen, CalculatorKeypad keypad) {
+            this.screen = screen;
+            this.keypad = keypad;
+        }
+
+        public void Go() {
+            string firstNumber = this.Interact("Enter your first number");
+            string mathOperator = this.Interact("Enter the operator");
+            string secondNumber = this.Interact("Enter your Second Number");
 
             var calculator = new Calculator(0);
 
-            var brokenCalculator = new Calculator(5);
-
             var result1 = calculator.Calculate(firstNumber, secondNumber, mathOperator);
-            var result2 = brokenCalculator.Calculate(firstNumber, secondNumber, mathOperator);
-
-            return 0;
         }
 
-        public static string Interact(string message) {
-            Console.WriteLine(message);
-            Console.WriteLine("> ");
-            var response = Console.ReadLine();
+        public string Interact(string message) {
+            screen.Print(message);
+            screen.Print("> ");
+
+            var response = keypad.GetInput();
             return response;
+        }
+    }
+
+    public class CalculatorScreen
+    {
+        public virtual void Print(string message) {
+            Console.WriteLine(message);
+        }
+    }
+
+    public class CalculatorKeypad
+    {
+        public virtual string GetInput() {
+            return Console.ReadLine();
+        }
+    }
+
+    public class Program {
+        public static void Main(string[] args) {
+            var screen = new CalculatorScreen();
+            var keypad = new CalculatorKeypad();
+            new CalculatorInterface().Go(screen, keypad);
         }
     }
 }

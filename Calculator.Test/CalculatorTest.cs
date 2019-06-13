@@ -1,15 +1,31 @@
 using System;
 using Xunit;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Calculator.Test
 {
-    public class Claculator2Tests
+    public class CalculatorInterfaceTests
     {
         [Fact]
-        public void Calculator2_Runs() {
-            var calculat = new Calculator(0);
+        public void Go_AsksForFirstNumberFirst() {
+            // Arrange
+            var screen = new FakeScreen();
+            var keypad = new FakeKeypad();
+            keypad.Messages = new List<string> {
+                "5",
+                "2",
+                "*",
+            };
+
+            var calculatorInterface = new CalculatorInterface(screen, keypad);
+
+            // Act
+            calculatorInterface.Go();
+
+            // Assert
+            Assert.Equal("Enter your first number", screen.Messages[0]);
         }
     }
 
@@ -52,6 +68,24 @@ namespace Calculator.Test
 
             // Assert?
             Assert.Equal("Invalid input", actual);
+        }
+    }
+
+    public class FakeScreen : CalculatorScreen
+    {
+        public List<string> Messages { get; set; } = new List<string>();
+        public override void Print(string message) {
+            this.Messages.Add(message);
+        }
+    }
+
+    public class FakeKeypad : CalculatorKeypad
+    {
+        private int numMessage = 0;
+        public List<string> Messages { get; set; } = new List<string>();
+
+        public override void GetInput(string message) {
+            return this.Messages[numMessage];
         }
     }
 }
